@@ -6,8 +6,6 @@
 - [Tech Stack & Dependencies](#tech-stack--dependencies)
 - [Contributors](#contributors)
 
----
-
 ## Description
 
 The primary purpose of this repository is to help me keep track of my progress in data structures and algorithms. It serves as a personal space where I can document and store my solutions, and it may also be a helpful reference for me in the future.
