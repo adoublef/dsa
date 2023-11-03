@@ -1,4 +1,7 @@
-use std::{collections::HashSet, hash::Hash};
+use std::{
+    collections::{BTreeMap, HashSet},
+    hash::Hash,
+};
 
 struct Solution;
 
@@ -19,6 +22,22 @@ impl Solution {
                 }
             })
             .0
+    }
+
+    /// https://leetcode.com/problems/maximum-subarray/
+    fn problem_53(nums: Vec<i32>) -> i32 {
+        nums.into_iter()
+            .fold((i32::MIN, 0), |(best_sum, curr_sum), n| {
+                let v = curr_sum + n;
+                (best_sum.max(v), 0.max(v))
+            })
+            .0
+    }
+
+    /// https://leetcode.com/problems/climbing-stairs/
+    fn problem_70(n: i32) -> i32 {
+        let g = (1.0 + 5.0_f64.sqrt()) / 2.0;
+        ((g.powi(n + 1) - (1.0 - g).powi(n + 1)) / 5.0_f64.sqrt()).round() as i32
     }
 
     /// You want to maximize your profit by choosing a single
@@ -130,6 +149,38 @@ impl Solution {
         (0..n).fold((0, 1), |(a, b), _| (b, a + b)).0
     }
 
+    fn problem_740(nums: Vec<i32>) -> i32 {
+        // as I need it to be sorted better to use this
+        // than a HashMap
+        let (a, b) = nums
+            .iter()
+            .fold(BTreeMap::new(), |mut m, n| {
+                *m.entry(n).or_insert(0) += 1;
+                m
+            })
+            .iter()
+            .fold(
+                (0, 0),
+                |(a, b), (k, v)| {
+                    if a == *k - 1 {
+                        (a, b)
+                    } else {
+                        (b, b + v)
+                    }
+                },
+            );
+
+        a.max(b)
+    }
+
+    /// https://leetcode.com/problems/min-cost-climbing-stairs/
+    fn problem_746(cost: Vec<i32>) -> i32 {
+        cost.iter()
+            .chain(std::iter::once(&0))
+            .fold((0, 0), |(x, y), n| (y, n + x.min(y)))
+            .1
+    }
+
     // TODO: make generic
     /// https://leetcode.com/problems/n-th-tribonacci-number/
     fn problem_1137(n: i32) -> i32 {
@@ -171,6 +222,23 @@ pub mod test {
         run((vec![2, 7, 11, 15], 9), vec![0, 1]);
         run((vec![3, 2, 4], 6), vec![1, 2]);
         run((vec![3, 3], 6), vec![0, 1]);
+    }
+
+    #[test]
+    fn test_53() {
+        assert_eq!(Solution::problem_53(vec![-2, 1, -3, 4, -1, 2, 1, -5, 4]), 6);
+        assert_eq!(Solution::problem_53(vec![1]), 1);
+        assert_eq!(Solution::problem_53(vec![-1]), -1);
+        assert_eq!(Solution::problem_53(vec![5, 4, -1, 7, 8]), 23)
+    }
+
+    #[test]
+    fn test_70() {
+        assert_eq!(Solution::problem_70(1), 1);
+        assert_eq!(Solution::problem_70(6), 13);
+        assert_eq!(Solution::problem_70(9), 55);
+        assert_eq!(Solution::problem_70(13), 377);
+        assert_eq!(Solution::problem_70(18), 4181);
     }
 
     #[test]
@@ -223,6 +291,15 @@ pub mod test {
         assert_eq!(Solution::problem_509(0), 0);
         assert_eq!(Solution::problem_509(2), 1);
         assert_eq!(Solution::problem_509(4), 3);
+    }
+
+    #[test]
+    fn test_746() {
+        assert_eq!(Solution::problem_746(vec![10, 15, 20]), 15);
+        assert_eq!(
+            Solution::problem_746(vec![1, 100, 1, 1, 1, 100, 1, 1, 100, 1]),
+            6
+        );
     }
 
     #[test]
