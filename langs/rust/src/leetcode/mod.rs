@@ -103,6 +103,27 @@ impl Solution {
         }
     }
 
+    /// https://leetcode.com/explore/featured/card/the-leetcode-beginners-guide/
+    fn problem_412(n: i32) -> Vec<String> {
+        [1..=n].iter().enumerate().fold(Vec::new(), |res, (x, _)| {
+            let mut val = String::new();
+
+            if x % 3 == 0 {
+                val += "Fizz"
+            }
+
+            if x % 5 == 0 {
+                val += "Buzz"
+            }
+
+            if val.is_empty() {
+                val = x.to_string();
+            }
+
+            [res, vec![val]].concat()
+        })
+    }
+
     // TODO: make generic
     /// https://leetcode.com/problems/fibonacci-number/
     fn problem_509(n: i32) -> i32 {
@@ -114,6 +135,26 @@ impl Solution {
     fn problem_1137(n: i32) -> i32 {
         (0..n).fold((0, 1, 1), |(a, b, c), _| (b, c, a + b + c)).0
     }
+
+    /// https://leetcode.com/problems/running-sum-of-1d-array/
+    fn problem_1480(nums: Vec<i32>) -> Vec<i32> {
+        nums.iter()
+            .fold((Vec::new(), 0), |(res, mut acc), n| {
+                acc += n;
+                ([res, vec![acc]].concat(), acc)
+            })
+            .0
+    }
+
+    /// https://leetcode.com/problems/richest-customer-wealth/
+    fn problem_1672(nums: Vec<i32>) -> Vec<i32> {
+        nums.iter()
+            .fold((Vec::new(), 0), |(res, mut acc), n| {
+                acc += n;
+                ([res, vec![acc]].concat(), acc)
+            })
+            .0
+    }
 }
 
 #[cfg(test)]
@@ -122,10 +163,14 @@ pub mod test {
 
     #[test]
     fn test_1() {
-        let nums = vec![2, 7, 11, 15];
-        let target = 9;
-        let result = Solution::problem_1(nums, target);
-        assert_eq!(result, vec![0, 1]);
+        let run = |(nums, target), expected| {
+            let res = Solution::problem_1(nums, target);
+            assert_eq!(res, expected)
+        };
+
+        run((vec![2, 7, 11, 15], 9), vec![0, 1]);
+        run((vec![3, 2, 4], 6), vec![1, 2]);
+        run((vec![3, 3], 6), vec![0, 1]);
     }
 
     #[test]
@@ -156,6 +201,24 @@ pub mod test {
     }
 
     #[test]
+    fn test_412() {
+        let run = |nums, expected| {
+            let res = Solution::problem_412(nums);
+            assert_eq!(res, expected)
+        };
+
+        run(3, vec!["1", "2", "Fizz"]);
+        run(5, vec!["1", "2", "Fizz", "4", "Buzz"]);
+        run(
+            15,
+            vec![
+                "1", "2", "Fizz", "4", "Buzz", "Fizz", "7", "8", "Fizz", "Buzz", "11", "Fizz",
+                "13", "14", "FizzBuzz",
+            ],
+        );
+    }
+
+    #[test]
     fn test_509() {
         assert_eq!(Solution::problem_509(0), 0);
         assert_eq!(Solution::problem_509(2), 1);
@@ -166,5 +229,17 @@ pub mod test {
     fn test_1137() {
         assert_eq!(Solution::problem_1137(4), 4);
         assert_eq!(Solution::problem_1137(25), 1389537);
+    }
+
+    #[test]
+    fn test_1672() {
+        let run = |nums, expected| {
+            let res = Solution::problem_1672(nums);
+            assert_eq!(res, expected)
+        };
+
+        run(vec![1, 2, 3, 4], vec![1, 3, 6, 10]);
+        run(vec![1, 1, 1, 1, 1], vec![1, 2, 3, 4, 5]);
+        run(vec![3, 1, 2, 10, 1], vec![3, 4, 6, 16, 17]);
     }
 }
